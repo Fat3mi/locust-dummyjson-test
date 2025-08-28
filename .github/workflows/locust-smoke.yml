@@ -1,0 +1,33 @@
+name: Locust Smoke Test
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  locust-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12.3"
+
+      - name: Create and activate venv
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+
+      - name: Install dependencies
+        run: |
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Run Locust Smoke Test
+        run: |
+          source venv/bin/activate
+          locust -f locustfile.py --headless -u 5 -r 1 -t 30s
